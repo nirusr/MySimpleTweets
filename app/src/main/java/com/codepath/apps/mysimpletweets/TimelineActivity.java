@@ -41,17 +41,30 @@ public class TimelineActivity extends AppCompatActivity {
         client = TwitterApplication.getRestClient();//Create singleton client
 
         populateTimeline();
+
+
+        //Listener
+        lvTweets.addOnScrollListener(new EndlessScrollListener() {
+            @Override
+            public boolean onLoadMore(int page, int totalItemsCount) {
+                customLoadMoreDataFromClient(page);
+                return true;
+            }
+        });
+
+
+
     }
     //Send API Request
     //Fill the listview with results
     private void populateTimeline() {
-        client.getHomeTimeline(new JsonHttpResponseHandler() {
+        client.getHomeTimeline(1L, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                 //super.onSuccess(statusCode, headers, response);
                 //Log.v("DEBUG Success:", response.toString());
                 //Desserialize json
-               // aTweets.addAll(Tweet.fromJsonArray(response));
+                // aTweets.addAll(Tweet.fromJsonArray(response));
                 aTweets.clear();
                 tweets.addAll(Tweet.fromJsonArray(response));
                 /*
@@ -62,13 +75,51 @@ public class TimelineActivity extends AppCompatActivity {
                 }*/
 
                 aTweets.notifyDataSetChanged();
-             }
+            }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 //super.onFailure(statusCode, headers, throwable, errorResponse);
                 Log.v("DEBUG Fail:", errorResponse.toString());
+
             }
         });
-   }
+    }
+
+    public void customLoadMoreDataFromClient(int page) {
+
+
+        Tweet tweet = tweets.get(page); //Get the last tweet
+        long last_since_id = tweet.getUid();
+        Log.d("DEBUG-ID:", Long.toString(last_since_id));
+
+        client.getHomeTimeline(page, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                //super.onSuccess(statusCode, headers, response);
+                //Log.v("DEBUG Success:", response.toString());
+                //Desserialize json
+                // aTweets.addAll(Tweet.fromJsonArray(response));
+                //aTweets.clear();
+                tweets.addAll(Tweet.fromJsonArray(response));
+                /*
+                ArrayList<Tweet> tweetsArrayList = Tweet.fromJsonArray(response);
+                for ( Tweet t : tweetsArrayList) {
+                    tweets.add(t);
+                    Log.d("Added:", t.getUser().getName());
+                }*/
+
+                aTweets.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                //super.onFailure(statusCode, headers, throwable, errorResponse);
+                Log.v("DEBUG Fail:", errorResponse.toString());
+
+            }
+        });
+    }
+
+
 }
