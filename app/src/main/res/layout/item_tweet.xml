@@ -26,6 +26,16 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Timestamp"
+        android:id="@+id/tvTimestamp"
+        android:layout_above="@+id/tvBody"
+        android:paddingRight="2dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="body"
         android:id="@+id/tvBody"
         android:layout_below="@+id/tvUsername"
@@ -33,7 +43,7 @@
         android:layout_toEndOf="@+id/ivProfileImage"
         android:paddingRight="2dp"
         android:paddingBottom="2dp"/>
-    />
+
 
 
 </RelativeLayout>
