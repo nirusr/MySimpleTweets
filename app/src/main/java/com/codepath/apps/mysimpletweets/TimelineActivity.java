@@ -2,6 +2,8 @@ package com.codepath.apps.mysimpletweets;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -19,24 +21,25 @@ import java.util.ArrayList;
 
 
 public class TimelineActivity extends AppCompatActivity {
-    private TwitterClient client;
-    private TweetsArrayAdapter aTweets;
-    private ListView lvTweets;
-    private ArrayList<Tweet> tweets;
+    public TwitterClient client;
+    public TweetsArrayAdapter aTweets;
+    public RecyclerView lvTweets;
+    public ArrayList<Tweet> tweets;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
 
-        lvTweets = (ListView) findViewById(R.id.lvTweets);
+        lvTweets = (RecyclerView) findViewById(R.id.lvTweets);
 
         tweets = new ArrayList<Tweet>();
-        aTweets = new TweetsArrayAdapter(this, tweets);
+        aTweets = new TweetsArrayAdapter(tweets);
         lvTweets.setAdapter(aTweets);
-
+        lvTweets.setLayoutManager(new LinearLayoutManager(this));
 
         client = TwitterApplication.getRestClient();//Create singleton client
+
         populateTimeline();
     }
     //Send API Request
@@ -48,12 +51,18 @@ public class TimelineActivity extends AppCompatActivity {
                 //super.onSuccess(statusCode, headers, response);
                 //Log.v("DEBUG Success:", response.toString());
                 //Desserialize json
-                aTweets.addAll(Tweet.fromJsonArray(response));
+               // aTweets.addAll(Tweet.fromJsonArray(response));
+                aTweets.clear();
+                tweets.addAll(Tweet.fromJsonArray(response));
+                /*
+                ArrayList<Tweet> tweetsArrayList = Tweet.fromJsonArray(response);
+                for ( Tweet t : tweetsArrayList) {
+                    tweets.add(t);
+                    Log.d("Added:", t.getUser().getName());
+                }*/
 
-
-
-
-            }
+                aTweets.notifyDataSetChanged();
+             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {

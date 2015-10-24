@@ -1,6 +1,8 @@
 package com.codepath.apps.mysimpletweets;
 
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,34 +13,76 @@ import android.widget.TextView;
 import com.codepath.apps.mysimpletweets.models.Tweet;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by sgovind on 10/23/15.
  */
-public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
+public class TweetsArrayAdapter extends RecyclerView.Adapter<TweetsArrayAdapter.ViewHolder> {
 
-    public TweetsArrayAdapter(Context context,  List<Tweet> tweets) {
-        super(context, R.layout.item_tweet, tweets);
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        //Define screen fields
+        TextView tvUsername ;
+        TextView tvBody;
+        ImageView ivProfileImage;
+
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+            //set the fields in the view holder
+            tvUsername = (TextView) itemView.findViewById(R.id.tvUsername);
+            tvBody = (TextView) itemView.findViewById(R.id.tvBody);
+            ivProfileImage = (ImageView) itemView.findViewById(R.id.ivProfileImage);
+        }
+    }
+
+    private ArrayList<Tweet> mTweets;
+
+    public TweetsArrayAdapter(ArrayList<Tweet> tweets) {
+        this.mTweets = tweets;
+        Log.d("#of tweets:", Integer.toString(getItemCount()));
+    }
+
+
+    @Override
+    public TweetsArrayAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        Context context = parent.getContext();
+        LayoutInflater inflater = LayoutInflater.from(context);
+
+        //inflate layout
+        View itemTweetView  = inflater.inflate(R.layout.item_tweet, parent, false);
+
+        ViewHolder viewHolder = new ViewHolder(itemTweetView);
+
+        return viewHolder;
+
+
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public void onBindViewHolder(TweetsArrayAdapter.ViewHolder holder, int position) {
+        Tweet tweet = mTweets.get(position);
+        //Log.d("DEBUG:RECYCLE", tweet.getBody());
 
-        Tweet tweet = getItem(position);
 
-        if ( convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_tweet, parent, false);
-        }
-        ImageView ivProfileImage = (ImageView) convertView.findViewById(R.id.ivProfileImage);
-        TextView tvUsername = (TextView) convertView.findViewById(R.id.tvUsername);
-        TextView tvBody = (TextView) convertView.findViewById(R.id.tvBody);
 
-        tvUsername.setText(tweet.getUser().getName());
-        tvBody.setText(tweet.getBody());
-        Picasso.with(getContext()).load(tweet.getUser().getProfileImageUrl()).fit().centerCrop().into(ivProfileImage);
+        holder.tvUsername.setText(tweet.getUser().getName());
+        holder.tvBody.setText((tweet.getBody()));
+        Picasso.with(holder.ivProfileImage.getContext()).
+                load(tweet.getUser().getProfileImageUrl()).fit().centerCrop().into(holder.ivProfileImage);
 
-        return convertView;
 
+    }
+
+    @Override
+    public int getItemCount() {
+        return mTweets.size();
+    }
+
+    public void clear() {
+        mTweets.clear();
+        notifyDataSetChanged();
     }
 }
