@@ -1,4 +1,4 @@
-package com.codepath.apps.mysimpletweets;
+package com.codepath.apps.mysimpletweets.client;
 
 import org.scribe.builder.api.Api;
 import org.scribe.builder.api.FlickrApi;
@@ -56,7 +56,7 @@ public class TwitterClient extends OAuthBaseClient {
 	public void getHomeTimeline(long id, AsyncHttpResponseHandler handler) {
 		String apiUrl = getApiUrl("statuses/home_timeline.json");
 		RequestParams params = new RequestParams();
-		params.put("count", 20);
+		params.put("count", 25);
 		Log.d("DEBUG:ID", Long.toString(id));
 		params.put("since_id", id);
 		client.get(apiUrl, params, handler);

@@ -1,15 +1,17 @@
-package com.codepath.apps.mysimpletweets;
+package com.codepath.apps.mysimpletweets.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
+import com.codepath.apps.mysimpletweets.R;
+import com.codepath.apps.mysimpletweets.adapters.TweetsArrayAdapter;
+import com.codepath.apps.mysimpletweets.application.TwitterApplication;
+import com.codepath.apps.mysimpletweets.client.TwitterClient;
+import com.codepath.apps.mysimpletweets.listeners.EndlessScrollListener;
 import com.codepath.apps.mysimpletweets.models.Tweet;
-import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 
@@ -93,7 +95,7 @@ public class TimelineActivity extends AppCompatActivity {
         long last_since_id = tweet.getUid();
         Log.d("DEBUG-ID:", Long.toString(last_since_id));
 
-        client.getHomeTimeline(page, new JsonHttpResponseHandler() {
+        client.getHomeTimeline(last_since_id, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                 //super.onSuccess(statusCode, headers, response);
