@@ -57,9 +57,18 @@ public class TwitterClient extends OAuthBaseClient {
 		String apiUrl = getApiUrl("statuses/home_timeline.json");
 		RequestParams params = new RequestParams();
 		params.put("count", 25);
-		Log.d("DEBUG:ID", Long.toString(id));
+		//Log.d("DEBUG:ID", Long.toString(id));
 		params.put("since_id", id);
 		client.get(apiUrl, params, handler);
 
+	}
+
+	//Post Tweet
+	public void postTweet(String body, AsyncHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("statuses/update.json");
+		RequestParams params = new RequestParams();
+		params.put("status", body);
+		Log.d("DEBUG:Body=", body);
+		client.post(apiUrl, params, handler);
 	}
 }

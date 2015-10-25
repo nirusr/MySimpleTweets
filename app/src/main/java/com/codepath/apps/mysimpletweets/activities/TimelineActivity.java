@@ -1,10 +1,15 @@
 package com.codepath.apps.mysimpletweets.activities;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.codepath.apps.mysimpletweets.R;
 import com.codepath.apps.mysimpletweets.adapters.TweetsArrayAdapter;
@@ -123,5 +128,30 @@ public class TimelineActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.timeline, menu );
+        MenuItem addTweetItem = menu.findItem(R.id.action_compose);
+        return super.onCreateOptionsMenu(menu);
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_compose: {
+                //Toast.makeText(this, "Post clicked", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(this, ComposeTweetActivity.class);
+                startActivityForResult(intent, 100);
+
+            }
+            default: return super.onOptionsItemSelected(item);
+
+
+        }
+
+
+
+
+    }
 }

@@ -4,5 +4,8 @@
     <string name="app_name">Simple Tweets</string>
     <string name="login_label">Connect to Twitter</string>
     <string name="title_activity_timeline">Home Timeline</string>
+    <string name="title_activity_composeTweet">Compose Tweet</string>
+    <string name="labelBtnCancel">Cancel</string>
+    <string name="labelBtnTweet">Tweet</string>
 
 </resources>
