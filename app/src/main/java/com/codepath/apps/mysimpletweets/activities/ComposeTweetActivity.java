@@ -1,10 +1,13 @@
 package com.codepath.apps.mysimpletweets.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,9 +25,27 @@ public class ComposeTweetActivity extends AppCompatActivity {
     public static final int REQUEST_CODE = 100;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Context context = getApplicationContext();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_compose_tweet);
         tvMyTweet = (TextView) findViewById(R.id.etMyTweet);
+
+        final InputMethodManager imm =(InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        tvMyTweet.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    imm.showSoftInput(tvMyTweet, InputMethodManager.SHOW_IMPLICIT);
+
+                } else {
+                    imm.hideSoftInputFromInputMethod(tvMyTweet.getWindowToken(), 0);
+                }
+                imm.toggleSoftInput(0,0);
+            }
+        });
+
+
         client = TwitterApplication.getRestClient();
 
     }
