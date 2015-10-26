@@ -36,9 +36,7 @@ public class TimelineActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
-
         lvTweets = (RecyclerView) findViewById(R.id.lvTweets);
-
         tweets = new ArrayList<Tweet>();
         aTweets = new TweetsArrayAdapter(tweets);
         lvTweets.setAdapter(aTweets);
@@ -64,28 +62,16 @@ public class TimelineActivity extends AppCompatActivity {
     //Send API Request
     //Fill the listview with results
     private void populateTimeline() {
-        client.getHomeTimeline(1L, new JsonHttpResponseHandler() {
+        client.getHomeTimeline_withCount(1L, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                //super.onSuccess(statusCode, headers, response);
-                //Log.v("DEBUG Success:", response.toString());
-                //Desserialize json
-                // aTweets.addAll(Tweet.fromJsonArray(response));
                 aTweets.clear();
                 tweets.addAll(Tweet.fromJsonArray(response));
-                /*
-                ArrayList<Tweet> tweetsArrayList = Tweet.fromJsonArray(response);
-                for ( Tweet t : tweetsArrayList) {
-                    tweets.add(t);
-                    Log.d("Added:", t.getUser().getName());
-                }*/
-
                 aTweets.notifyDataSetChanged();
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                //super.onFailure(statusCode, headers, throwable, errorResponse);
                 Log.v("DEBUG Fail:", errorResponse.toString());
 
             }
@@ -93,28 +79,15 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
     public void customLoadMoreDataFromClient(int page) {
-
-
         Tweet tweet = tweets.get(page); //Get the last tweet
-        long last_since_id = tweet.getUid();
-        Log.d("DEBUG-ID:", Long.toString(last_since_id));
+        long maxId = Tweet.maxId - 1;
 
-        client.getHomeTimeline(last_since_id, new JsonHttpResponseHandler() {
+
+        client.getHomeTimeline_withMaxId(maxId, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                //super.onSuccess(statusCode, headers, response);
-                //Log.v("DEBUG Success:", response.toString());
-                //Desserialize json
-                // aTweets.addAll(Tweet.fromJsonArray(response));
-                //aTweets.clear();
-                tweets.addAll(Tweet.fromJsonArray(response));
-                /*
-                ArrayList<Tweet> tweetsArrayList = Tweet.fromJsonArray(response);
-                for ( Tweet t : tweetsArrayList) {
-                    tweets.add(t);
-                    Log.d("Added:", t.getUser().getName());
-                }*/
 
+                tweets.addAll(Tweet.fromJsonArray(response));
                 aTweets.notifyDataSetChanged();
             }
 

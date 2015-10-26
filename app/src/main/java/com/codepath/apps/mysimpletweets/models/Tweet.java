@@ -20,6 +20,7 @@ public class Tweet {
     private long uid;
     private String createdAt;
     private User user;
+    public static long maxId;
 
     //Deserialize JSON
     public static Tweet fromJson(JSONObject jsonObject) {
@@ -50,6 +51,7 @@ public class Tweet {
                 Tweet tweet = Tweet.fromJson(tweetJson);
                 if ( tweet != null ) {
                     tweets.add(tweet);
+                    maxId = tweet.getUid();
                 }
 
             } catch (JSONException e) {
@@ -118,4 +120,6 @@ public class Tweet {
     public User getUser() {
         return user;
     }
+
+
 }
