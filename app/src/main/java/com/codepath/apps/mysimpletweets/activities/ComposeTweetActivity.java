@@ -84,8 +84,6 @@ public class ComposeTweetActivity extends AppCompatActivity {
         setResult(RESULT_OK);
         finish();
 
-
-
     }
 
 }
