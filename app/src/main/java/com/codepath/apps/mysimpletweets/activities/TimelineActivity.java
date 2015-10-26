@@ -26,7 +26,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-
+//branch
 public class TimelineActivity extends AppCompatActivity {
     public TwitterClient client;
     public TweetsArrayAdapter aTweets;
