@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.codepath.apps.mysimpletweets.R;
 import com.codepath.apps.mysimpletweets.adapters.TweetsArrayAdapter;
@@ -142,16 +141,19 @@ public class TimelineActivity extends AppCompatActivity {
             case R.id.action_compose: {
                 //Toast.makeText(this, "Post clicked", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(this, ComposeTweetActivity.class);
-                startActivityForResult(intent, 100);
+                startActivityForResult(intent, ComposeTweetActivity.REQUEST_CODE);
 
             }
             default: return super.onOptionsItemSelected(item);
 
 
         }
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == ComposeTweetActivity.REQUEST_CODE && resultCode == RESULT_OK) {
 
-
-
+        }
     }
 }

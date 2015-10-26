@@ -1,5 +1,6 @@
 package com.codepath.apps.mysimpletweets.activities;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,13 +14,12 @@ import com.codepath.apps.mysimpletweets.client.TwitterClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.apache.http.Header;
-import org.json.JSONArray;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 public class ComposeTweetActivity extends AppCompatActivity {
     public TextView tvMyTweet ;
     public TwitterClient client;
+    public static final int REQUEST_CODE = 100;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +55,16 @@ public class ComposeTweetActivity extends AppCompatActivity {
 
     public void btnTweetClicked(View v) {
         postTweet();
+    }
+
+    public void btnCancelClicked (View v) {
+        tvMyTweet.setText("");
+        Intent intent = new Intent();
+        setResult(RESULT_OK);
+        finish();
+
+
+
     }
 
 }
