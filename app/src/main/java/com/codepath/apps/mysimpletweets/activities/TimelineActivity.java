@@ -1,6 +1,7 @@
 package com.codepath.apps.mysimpletweets.activities;
 
 import android.content.Intent;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -31,6 +32,7 @@ public class TimelineActivity extends AppCompatActivity {
     public TweetsArrayAdapter aTweets;
     public RecyclerView lvTweets;
     public ArrayList<Tweet> tweets;
+    public SwipeRefreshLayout swipeContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +46,17 @@ public class TimelineActivity extends AppCompatActivity {
 
         client = TwitterApplication.getRestClient();//Create singleton client
 
-        populateTimeline();
+        //swipecontainer
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //populateTimeline();
+                populateTimeline();
+                swipeContainer.setRefreshing(false);
 
+            }
+        });
 
         //Listener
         lvTweets.addOnScrollListener(new EndlessScrollListener() {
@@ -55,8 +66,14 @@ public class TimelineActivity extends AppCompatActivity {
                 return true;
             }
         });
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
 
 
+
+         populateTimeline();
 
     }
     //Send API Request
