@@ -31,7 +31,7 @@ public class ComposeTweetActivity extends AppCompatActivity {
         tvMyTweet = (TextView) findViewById(R.id.etMyTweet);
 
         final InputMethodManager imm =(InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
-
+        //
         tvMyTweet.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
