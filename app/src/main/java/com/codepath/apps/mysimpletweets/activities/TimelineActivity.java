@@ -1,6 +1,8 @@
 package com.codepath.apps.mysimpletweets.activities;
 
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,13 +12,17 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.activeandroid.query.Delete;
+import com.codepath.apps.mysimpletweets.Helper.DBSaveAsyncTask;
 import com.codepath.apps.mysimpletweets.R;
 import com.codepath.apps.mysimpletweets.adapters.TweetsArrayAdapter;
 import com.codepath.apps.mysimpletweets.application.TwitterApplication;
 import com.codepath.apps.mysimpletweets.client.TwitterClient;
 import com.codepath.apps.mysimpletweets.listeners.EndlessScrollListener;
 import com.codepath.apps.mysimpletweets.models.Tweet;
+import com.codepath.apps.mysimpletweets.models.TweetModel;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 
@@ -24,6 +30,7 @@ import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.net.NetworkInterface;
 import java.util.ArrayList;
 
 //branch
@@ -79,42 +86,63 @@ public class TimelineActivity extends AppCompatActivity {
     //Send API Request
     //Fill the listview with results
     private void populateTimeline() {
-        client.getHomeTimeline_withCount(1L, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                aTweets.clear();
-                tweets.addAll(Tweet.fromJsonArray(response));
-                aTweets.notifyDataSetChanged();
-            }
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                Log.v("DEBUG Fail:", errorResponse.toString());
+        if ( isNetworkAvailable()) {
+            client.getHomeTimeline_withCount(1L, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                    aTweets.clear();
+                    aTweets.addAll(Tweet.fromJsonArray(response));
+                    Log.d("Initial Fetch=", Long.toString(aTweets.getItemCount()));
+                    new Delete().from(TweetModel.class).execute();
+                    new DBSaveAsyncTask().execute(Tweet.fromJsonArray(response));
+                }
 
-            }
-        });
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+
+                    if (! isNetworkAvailable()) {
+                        Toast.makeText(getApplicationContext(), "Network Not available - Getting Data from Saved DB", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Log.v("DEBUG Fail:", errorResponse.toString());
+                    }
+
+                }
+            });
+        } else {
+            //TODO get data from DB
+            Toast.makeText(this, "Network Not available - Getting Data from Saved DB", Toast.LENGTH_SHORT).show();
+
+        }
     }
 
     public void customLoadMoreDataFromClient(int page) {
         Tweet tweet = tweets.get(page); //Get the last tweet
         long maxId = Tweet.maxId - 1;
 
+        if ( isNetworkAvailable()) {
+            client.getHomeTimeline_withMaxId(maxId, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                    aTweets.addAll(Tweet.fromJsonArray(response));
+                    Log.d("Scroll Fetch=", Long.toString(aTweets.getItemCount()));
+                    new DBSaveAsyncTask().execute(Tweet.fromJsonArray(response));
+                }
 
-        client.getHomeTimeline_withMaxId(maxId, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                    if (! isNetworkAvailable()) {
+                        Toast.makeText(getApplicationContext(), "Network Not available - Getting Data from Saved DB", Toast.LENGTH_SHORT).show();
+                    } else {
+                       Log.v("DEBUG Fail:", errorResponse.toString());
+                    }
 
-                tweets.addAll(Tweet.fromJsonArray(response));
-                aTweets.notifyDataSetChanged();
-            }
+                }
+            });
+        } else {
+            Toast.makeText(this, "Network Not available - Getting Data from Saved DB", Toast.LENGTH_SHORT).show();
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                //super.onFailure(statusCode, headers, throwable, errorResponse);
-                Log.v("DEBUG Fail:", errorResponse.toString());
-
-            }
-        });
+        }
     }
 
     @Override
@@ -145,5 +173,15 @@ public class TimelineActivity extends AppCompatActivity {
         if (requestCode == ComposeTweetActivity.REQUEST_CODE && resultCode == RESULT_OK) {
 
         }
+    }
+
+    public Boolean isNetworkAvailable() {
+
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return ( (activeNetworkInfo != null) && activeNetworkInfo.isConnectedOrConnecting());
+
+
+
     }
 }

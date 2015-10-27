@@ -32,7 +32,7 @@ public class Tweet {
             tweet.uid = jsonObject.getLong("id");
             String tweetCreatedAt = jsonObject.getString("created_at");
             tweet.createdAt = Tweet.getRelatvieTimeAgo(tweetCreatedAt);
-            tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
+            tweet.user = (User.fromJson(jsonObject.getJSONObject("user")));
         } catch (JSONException e) {
             e.printStackTrace();
         }

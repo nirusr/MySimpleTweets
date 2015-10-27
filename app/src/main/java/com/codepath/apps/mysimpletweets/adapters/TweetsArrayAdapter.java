@@ -51,24 +51,15 @@ public class TweetsArrayAdapter extends RecyclerView.Adapter<TweetsArrayAdapter.
     public TweetsArrayAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-
-        //inflate layout
         View itemTweetView  = inflater.inflate(R.layout.item_tweet, parent, false);
-
         ViewHolder viewHolder = new ViewHolder(itemTweetView);
-
         return viewHolder;
-
 
     }
 
     @Override
     public void onBindViewHolder(TweetsArrayAdapter.ViewHolder holder, int position) {
         Tweet tweet = mTweets.get(position);
-        //Log.d("DEBUG:RECYCLE", tweet.getBody());
-
-
-
         holder.tvUsername.setText(tweet.getUser().getName());
         holder.tvBody.setText((tweet.getBody()));
         holder.tvTimestamp.setText(tweet.getCreatedAt());
