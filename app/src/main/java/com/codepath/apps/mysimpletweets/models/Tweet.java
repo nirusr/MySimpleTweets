@@ -1,11 +1,15 @@
 package com.codepath.apps.mysimpletweets.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.format.DateUtils;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,7 +18,8 @@ import java.util.Locale;
 /**
  * Created by sgovind on 10/23/15.
  */
-public class Tweet {
+public class Tweet implements Parcelable {
+
     //List out the attributes
     private String body;
     private long uid;
@@ -28,11 +33,16 @@ public class Tweet {
         Tweet tweet = new Tweet();
         //Extract values from json object
         try {
+            //Log.v("DEBUG JSON=", jsonObject.toString());
             tweet.body = jsonObject.getString("text");
+
             tweet.uid = jsonObject.getLong("id");
             String tweetCreatedAt = jsonObject.getString("created_at");
             tweet.createdAt = Tweet.getRelatvieTimeAgo(tweetCreatedAt);
             tweet.user = (User.fromJson(jsonObject.getJSONObject("user")));
+
+
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -104,22 +114,76 @@ public class Tweet {
     }
 
 
-
     public String getBody() {
         return body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
     }
 
     public long getUid() {
         return uid;
     }
 
+    public void setUid(long uid) {
+        this.uid = uid;
+    }
+
     public String getCreatedAt() {
         return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
     }
 
     public User getUser() {
         return user;
     }
 
+    public void setUser(User user) {
+        this.user = user;
+    }
 
+    public static long getMaxId() {
+        return maxId;
+    }
+
+    public static void setMaxId(long maxId) {
+        Tweet.maxId = maxId;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.body);
+        dest.writeLong(this.uid);
+        dest.writeString(this.createdAt);
+        dest.writeParcelable(this.user, flags);
+    }
+
+    public Tweet() {
+    }
+
+    protected Tweet(Parcel in) {
+        this.body = in.readString();
+        this.uid = in.readLong();
+        this.createdAt = in.readString();
+        this.user = in.readParcelable(User.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<Tweet> CREATOR = new Parcelable.Creator<Tweet>() {
+        public Tweet createFromParcel(Parcel source) {
+            return new Tweet(source);
+        }
+
+        public Tweet[] newArray(int size) {
+            return new Tweet[size];
+        }
+    };
 }

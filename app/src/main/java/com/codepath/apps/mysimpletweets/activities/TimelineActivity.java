@@ -101,7 +101,7 @@ public class TimelineActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
 
-                    if (! isNetworkAvailable()) {
+                    if (!isNetworkAvailable()) {
                         Toast.makeText(getApplicationContext(), "Network Not available - Getting Data from Saved DB", Toast.LENGTH_SHORT).show();
                     } else {
                         Log.v("DEBUG Fail:", errorResponse.toString());
@@ -168,11 +168,18 @@ public class TimelineActivity extends AppCompatActivity {
         }
     }
 
+
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ComposeTweetActivity.REQUEST_CODE && resultCode == RESULT_OK) {
-
+            Tweet postedTweet = (Tweet) data.getParcelableExtra(ComposeTweetActivity.TWEET);
+            aTweets.insertAt(0, postedTweet);
+           // populateTimeline();
         }
+
     }
 
     public Boolean isNetworkAvailable() {
