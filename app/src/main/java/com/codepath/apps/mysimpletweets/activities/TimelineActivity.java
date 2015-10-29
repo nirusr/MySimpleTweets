@@ -88,7 +88,7 @@ public class TimelineActivity extends AppCompatActivity {
     private void populateTimeline() {
 
         if ( isNetworkAvailable()) {
-            client.getHomeTimeline_withCount(1L, new JsonHttpResponseHandler() {
+            client.getHomeTimeline(0, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                     aTweets.clear();
@@ -121,7 +121,7 @@ public class TimelineActivity extends AppCompatActivity {
         long maxId = Tweet.maxId - 1;
 
         if ( isNetworkAvailable()) {
-            client.getHomeTimeline_withMaxId(maxId, new JsonHttpResponseHandler() {
+            client.getHomeTimeline(maxId, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                     aTweets.addAll(Tweet.fromJsonArray(response));
