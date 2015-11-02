@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,6 +21,18 @@ import java.util.List;
  */
 public class TweetsArrayAdapter extends RecyclerView.Adapter<TweetsArrayAdapter.ViewHolder> {
 
+    // Define listener member variable
+    private static OnItemClickListener listener;
+
+    // Define the listener interface
+    public interface OnItemClickListener {
+        void onItemClick(View itemView, int position);
+    }
+
+    // Define the method that allows the parent activity or fragment to define the listener
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         //Define screen fields
@@ -29,13 +42,23 @@ public class TweetsArrayAdapter extends RecyclerView.Adapter<TweetsArrayAdapter.
         TextView tvTimestamp;
 
 
-        public ViewHolder(View itemView) {
+        public ViewHolder(final View itemView) {
             super(itemView);
             //set the fields in the view holder
             tvUsername = (TextView) itemView.findViewById(R.id.tvUsername);
             tvBody = (TextView) itemView.findViewById(R.id.tvBody);
             ivProfileImage = (ImageView) itemView.findViewById(R.id.ivProfileImage);
             tvTimestamp = (TextView) itemView.findViewById(R.id.tvTimestamp);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null) {
+                        listener.onItemClick(itemView, getLayoutPosition());
+                    }
+
+                }
+            });
         }
     }
 
@@ -65,6 +88,7 @@ public class TweetsArrayAdapter extends RecyclerView.Adapter<TweetsArrayAdapter.
         holder.tvTimestamp.setText(tweet.getCreatedAt());
         Picasso.with(holder.ivProfileImage.getContext()).
                 load(tweet.getUser().getProfileImageUrl()).fit().centerCrop().into(holder.ivProfileImage);
+        holder.ivProfileImage.setTag(tweet.getUser().getScreenName());
 
 
     }

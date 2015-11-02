@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.activeandroid.query.Delete;
@@ -31,6 +32,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.net.NetworkInterface;
+import java.sql.Time;
 import java.util.ArrayList;
 
 //branch
@@ -81,6 +83,16 @@ public class TimelineActivity extends AppCompatActivity {
 
 
          populateTimeline();
+
+
+        aTweets.setOnItemClickListener(new TweetsArrayAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View itemView, int position) {
+                String name = tweets.get(position).getUser().getScreenName().toString();
+                Toast.makeText(getApplicationContext(), name, Toast.LENGTH_SHORT).show();
+
+            }
+        });
 
     }
     //Send API Request
@@ -190,5 +202,10 @@ public class TimelineActivity extends AppCompatActivity {
 
 
 
+    }
+
+    public void positionAction(View view) {
+        int position = (int) view.getTag();
+        Toast.makeText(view.getContext(),Integer.toString(position),Toast.LENGTH_SHORT).show();
     }
 }
